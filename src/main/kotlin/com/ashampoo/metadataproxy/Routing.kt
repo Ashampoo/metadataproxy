@@ -15,6 +15,9 @@
  */
 package com.ashampoo.metadataproxy
 
+import com.ashampoo.kim.Kim
+import com.ashampoo.kim.model.MetadataUpdate
+import com.ashampoo.kim.model.TiffOrientation
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -39,20 +42,20 @@ fun Application.configureRouting() {
 
         post("/") {
 
+            val remoteUrl = call.request.header("RemoteUrl")
+
+            if (remoteUrl == null) {
+                call.respond(HttpStatusCode.BadRequest, "Header 'RemoteUrl' is missing.")
+                return@post
+            }
+
             val updateRequest = call.receive<MetadataUpdateRequest>()
 
             println("Received request: $updateRequest")
 
-            val remoteUrl = call.request.header("RemoteUrl")
-
-            if (remoteUrl == null) {
-                call.respondText(SERVER_BANNER)
-                return@post
-            }
-
             val authToken = call.request.header(AUTHORIZATION_HEADER)
 
-            val response = httpClient.get(remoteUrl) {
+            val getResponse = httpClient.get(remoteUrl) {
 
                 /* If set, pass the auth token on to the remote service */
                 if (authToken != null)
@@ -60,26 +63,70 @@ fun Application.configureRouting() {
             }
 
             /* If the remote URL requires authorization we forward it as is. */
-            if (response.status == HttpStatusCode.Unauthorized) {
-                call.respond(response.status, response.bodyAsText())
+            if (getResponse.status == HttpStatusCode.Unauthorized) {
+                call.respond(getResponse.status, getResponse.bodyAsText())
                 return@post
             }
 
-            if (!response.status.isSuccess()) {
+            if (!getResponse.status.isSuccess()) {
 
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = "Call to remove URL responded with ${response.status}"
+                    message = "Call to remove URL responded with ${getResponse.status}"
                 )
 
                 return@post
             }
 
-            val remoteBytes = response.bodyAsBytes()
+            val remoteBytes = getResponse.bodyAsBytes()
 
-            // TODO Implement actual logic
+            val updatedBytes = try {
 
-            call.respond(HttpStatusCode.OK)
+                when (updateRequest.type) {
+
+                    MetadataUpdateRequestType.Orientation -> {
+
+                        val orientation: Int =
+                            updateRequest.orientation ?: error("Field 'orientation' must not be NULL.")
+
+                        val tiffOrientation = TiffOrientation.of(orientation)
+                            ?: error("Field 'orientation' has illegal value: $orientation")
+
+                        Kim.update(
+                            bytes = remoteBytes,
+                            update = MetadataUpdate.Orientation(
+                                tiffOrientation = tiffOrientation
+                            )
+                        )
+                    }
+
+                    else -> error("Type ${updateRequest.type} not implemented yet")
+                }
+
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.BadRequest, ex.message ?: "Invalid data.")
+                return@post
+            }
+
+            val putResponse = httpClient.put(remoteUrl) {
+
+                /* If set, pass the auth token on to the remote service */
+                if (authToken != null)
+                    header(AUTHORIZATION_HEADER, authToken)
+
+                contentType(ContentType.Application.OctetStream)
+                setBody(updatedBytes)
+            }
+
+            /*
+             * If the PUT failed, return the error code to the client.
+             */
+            if (!putResponse.status.isSuccess()) {
+                call.respond(getResponse.status, getResponse.bodyAsText())
+                return@post
+            }
+
+            call.respond(HttpStatusCode.OK, "Metadata updated.")
         }
     }
 }
