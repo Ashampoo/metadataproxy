@@ -5,5 +5,8 @@ Content-Type: application/json
 
 {
     "type": "Persons",
-    "personsInImage": ["John", "Jane"]
+    "personsInImage": [
+        "John",
+        "Jane"
+    ]
 }

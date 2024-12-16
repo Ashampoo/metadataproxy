@@ -15,7 +15,6 @@
  */
 package com.ashampoo.metadataproxy
 
-import com.ashampoo.xmp.XMPRegionArea
 import kotlinx.serialization.Serializable
 
 @Serializable
