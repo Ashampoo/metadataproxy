@@ -121,8 +121,8 @@ private fun updateBytes(
 
     MetadataUpdateRequestType.Orientation -> {
 
-        val orientation: Int =
-            updateRequest.orientation ?: error("Field 'orientation' must not be NULL.")
+        val orientation: Int = updateRequest.orientation
+            ?: error("Field 'orientation' must not be NULL.")
 
         val tiffOrientation = TiffOrientation.of(orientation)
             ?: error("Field 'orientation' has illegal value: $orientation")
@@ -159,6 +159,19 @@ private fun updateBytes(
             bytes = remoteBytes,
             update = MetadataUpdate.GpsCoordinates(
                 gpsCoordinates = gpsCoordinates
+            )
+        )
+    }
+
+    MetadataUpdateRequestType.Flagged -> {
+
+        val flagged: Boolean = updateRequest.flagged
+            ?: error("Field 'flagged' must not be NULL.")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Flagged(
+                flagged = flagged
             )
         )
     }
