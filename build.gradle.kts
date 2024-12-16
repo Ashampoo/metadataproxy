@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation")
 
     /* Ktor client */
     implementation("io.ktor:ktor-client-okhttp")

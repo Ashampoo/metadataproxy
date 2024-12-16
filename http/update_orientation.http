@@ -1,0 +1,7 @@
+POST http://localhost:8080/
+Authorization: Basic dGVzdDp0ZXN0
+Content-Type: application/json
+
+{
+    "type": "ORIENTATION"
+}

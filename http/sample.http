@@ -1,0 +1,4 @@
+# Get the sample.jpg from Nextcloud to see if that connection works
+# User "test" with password "test" = dGVzdDp0ZXN0
+GET http://localhost:8090/remote.php/dav/files/test/sample.jpg
+Authorization: Basic dGVzdDp0ZXN0
