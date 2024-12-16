@@ -2,8 +2,6 @@
 
 ## Installation
 
-**WiP**
-
 Service to do metadata manipulation using HTTP methods.
 
 The intended use is to allow metadata manipulation on big
