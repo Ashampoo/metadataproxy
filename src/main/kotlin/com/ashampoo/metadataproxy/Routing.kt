@@ -39,6 +39,10 @@ fun Application.configureRouting() {
 
         post("/") {
 
+            val updateRequest = call.receive<MetadataUpdateRequest>()
+
+            println("Received request: $updateRequest")
+
             val remoteUrl = call.request.header("RemoteUrl")
 
             if (remoteUrl == null) {
