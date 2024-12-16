@@ -206,6 +206,21 @@ private fun updateBytes(
         )
     }
 
+    // TODO Faces
+
+    MetadataUpdateRequestType.Persons -> {
+
+        val personsInImage: Set<String> = updateRequest.personsInImage
+            ?: error("Field 'personsInImage' must not be NULL.")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Persons(
+                personsInImage = personsInImage
+            )
+        )
+    }
+
     else -> error("Type ${updateRequest.type} not implemented yet")
 }
 
