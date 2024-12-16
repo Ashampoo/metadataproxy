@@ -193,6 +193,19 @@ private fun updateBytes(
         )
     }
 
+    MetadataUpdateRequestType.Keywords -> {
+
+        val keywords: Set<String> = updateRequest.keywords
+            ?: error("Field 'keywords' must not be NULL.")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Keywords(
+                keywords = keywords
+            )
+        )
+    }
+
     else -> error("Type ${updateRequest.type} not implemented yet")
 }
 
