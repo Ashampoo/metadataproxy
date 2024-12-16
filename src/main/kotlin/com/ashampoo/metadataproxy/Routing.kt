@@ -82,28 +82,10 @@ fun Application.configureRouting() {
 
             val updatedBytes = try {
 
-                when (updateRequest.type) {
-
-                    MetadataUpdateRequestType.Orientation -> {
-
-                        val orientation: Int =
-                            updateRequest.orientation ?: error("Field 'orientation' must not be NULL.")
-
-                        val tiffOrientation = TiffOrientation.of(orientation)
-                            ?: error("Field 'orientation' has illegal value: $orientation")
-
-                        Kim.update(
-                            bytes = remoteBytes,
-                            update = MetadataUpdate.Orientation(
-                                tiffOrientation = tiffOrientation
-                            )
-                        )
-                    }
-
-                    else -> error("Type ${updateRequest.type} not implemented yet")
-                }
+                updateBytes(updateRequest, remoteBytes)
 
             } catch (ex: Exception) {
+
                 call.respond(HttpStatusCode.BadRequest, ex.message ?: "Invalid data.")
                 return@post
             }
@@ -129,5 +111,39 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK, "Metadata updated.")
         }
     }
+}
+
+private fun updateBytes(
+    updateRequest: MetadataUpdateRequest,
+    remoteBytes: ByteArray
+): ByteArray = when (updateRequest.type) {
+
+    MetadataUpdateRequestType.Orientation -> {
+
+        val orientation: Int =
+            updateRequest.orientation ?: error("Field 'orientation' must not be NULL.")
+
+        val tiffOrientation = TiffOrientation.of(orientation)
+            ?: error("Field 'orientation' has illegal value: $orientation")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Orientation(
+                tiffOrientation = tiffOrientation
+            )
+        )
+    }
+
+    MetadataUpdateRequestType.TakenDate -> {
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.TakenDate(
+                takenDate = updateRequest.takenDate
+            )
+        )
+    }
+
+    else -> error("Type ${updateRequest.type} not implemented yet")
 }
 
