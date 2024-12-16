@@ -221,6 +221,19 @@ private fun updateBytes(
         )
     }
 
+    MetadataUpdateRequestType.Albums -> {
+
+        val albums: Set<String> = updateRequest.albums
+            ?: error("Field 'albums' must not be NULL.")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Albums(
+                albums = albums
+            )
+        )
+    }
+
     else -> error("Type ${updateRequest.type} not implemented yet")
 }
 
