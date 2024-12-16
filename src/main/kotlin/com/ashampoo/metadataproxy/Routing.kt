@@ -16,6 +16,7 @@
 package com.ashampoo.metadataproxy
 
 import com.ashampoo.kim.Kim
+import com.ashampoo.kim.model.GpsCoordinates
 import com.ashampoo.kim.model.MetadataUpdate
 import com.ashampoo.kim.model.TiffOrientation
 import io.ktor.client.*
@@ -140,6 +141,24 @@ private fun updateBytes(
             bytes = remoteBytes,
             update = MetadataUpdate.TakenDate(
                 takenDate = updateRequest.takenDate
+            )
+        )
+    }
+
+    MetadataUpdateRequestType.GpsCoordinates -> {
+
+        val gpsCoordinates = if (updateRequest.latitude != null && updateRequest.longitude != null)
+            GpsCoordinates(
+                latitude = updateRequest.latitude,
+                longitude = updateRequest.longitude
+            )
+        else
+            null
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.GpsCoordinates(
+                gpsCoordinates = gpsCoordinates
             )
         )
     }

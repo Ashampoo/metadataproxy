@@ -30,8 +30,8 @@ data class MetadataUpdateRequest(
     val takenDate: Long? = null,
 
     /* MetadataUpdateRequestType.GpsCoordinates */
-    val latitiude: Long? = null,
-    val longitude: Long? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
 
     /* MetadataUpdateRequestType.Flagged */
     val flagged: Boolean? = null,
