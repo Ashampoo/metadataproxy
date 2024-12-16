@@ -18,6 +18,7 @@ package com.ashampoo.metadataproxy
 import com.ashampoo.kim.Kim
 import com.ashampoo.kim.model.GpsCoordinates
 import com.ashampoo.kim.model.MetadataUpdate
+import com.ashampoo.kim.model.PhotoRating
 import com.ashampoo.kim.model.TiffOrientation
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -172,6 +173,22 @@ private fun updateBytes(
             bytes = remoteBytes,
             update = MetadataUpdate.Flagged(
                 flagged = flagged
+            )
+        )
+    }
+
+    MetadataUpdateRequestType.Rating -> {
+
+        val rating: Int = updateRequest.photoRating
+            ?: error("Field 'photoRating' must not be NULL.")
+
+        val photoRating = PhotoRating.of(rating)
+            ?: error("Field 'photoRating' has illegal value: $rating")
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Rating(
+                photoRating = photoRating
             )
         )
     }

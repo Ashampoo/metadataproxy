@@ -1,0 +1,9 @@
+POST http://localhost:8080
+RemoteUrl: http://localhost:8090/remote.php/dav/files/test/sample.jpg
+Authorization: Basic dGVzdDp0ZXN0
+Content-Type: application/json
+
+{
+    "type": "Rating",
+    "photoRating": -1
+}
