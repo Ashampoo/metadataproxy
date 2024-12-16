@@ -15,6 +15,7 @@
  */
 package com.ashampoo.metadataproxy
 
+import com.ashampoo.xmp.XMPRegionArea
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -43,7 +44,9 @@ data class MetadataUpdateRequest(
     val keywords: Set<String>? = null,
 
     /* MetadataUpdateRequestType.Faces */
-    // TODO Complex type, to be implemented later
+    val faces: Map<String, FaceRegionArea>? = null,
+    val widthPx: Int? = null,
+    val heightPx: Int? = null,
 
     /* MetadataUpdateRequestType.Persons */
     val personsInImage: Set<String>? = null,

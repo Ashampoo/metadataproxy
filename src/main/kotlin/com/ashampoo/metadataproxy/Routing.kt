@@ -20,6 +20,7 @@ import com.ashampoo.kim.model.GpsCoordinates
 import com.ashampoo.kim.model.MetadataUpdate
 import com.ashampoo.kim.model.PhotoRating
 import com.ashampoo.kim.model.TiffOrientation
+import com.ashampoo.xmp.XMPRegionArea
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -206,7 +207,36 @@ private fun updateBytes(
         )
     }
 
-    // TODO Faces
+    MetadataUpdateRequestType.Faces -> {
+
+        val widthPx: Int = updateRequest.widthPx
+            ?: error("Field 'widthPx' must not be NULL.")
+
+        val heightPx: Int = updateRequest.heightPx
+            ?: error("Field 'heightPx' must not be NULL.")
+
+        val faces: Map<String, FaceRegionArea> = updateRequest.faces
+            ?: error("Field 'faces' must not be NULL.")
+
+        val mappedFaces = faces.mapValues {
+
+            XMPRegionArea(
+                xPos = it.value.xPos,
+                yPos = it.value.yPos,
+                width = it.value.width,
+                height = it.value.height
+            )
+        }
+
+        Kim.update(
+            bytes = remoteBytes,
+            update = MetadataUpdate.Faces(
+                faces = mappedFaces,
+                widthPx = widthPx,
+                heightPx = heightPx
+            )
+        )
+    }
 
     MetadataUpdateRequestType.Persons -> {
 
@@ -233,7 +263,5 @@ private fun updateBytes(
             )
         )
     }
-
-    else -> error("Type ${updateRequest.type} not implemented yet")
 }
 

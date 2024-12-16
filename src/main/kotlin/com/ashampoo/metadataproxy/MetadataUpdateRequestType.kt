@@ -22,7 +22,7 @@ enum class MetadataUpdateRequestType {
     Flagged,
     Rating,
     Keywords,
-    // Faces, -- complex type, to be implemented later
+    Faces,
     Persons,
     Albums
 }

@@ -1,0 +1,24 @@
+POST http://localhost:8080
+RemoteUrl: http://localhost:8090/remote.php/dav/files/test/sample.jpg
+Authorization: Basic dGVzdDp0ZXN0
+Content-Type: application/json
+
+{
+    "type": "Faces",
+    "widthPx": 1800,
+    "heightPx": 1200,
+    "faces": {
+        "John": {
+            "xPos": 0.25,
+            "yPos": 0.25,
+            "width": 0.5,
+            "height": 0.5
+        },
+        "Jane": {
+            "xPos": 0.1,
+            "yPos": 0.1,
+            "width": 0.2,
+            "height": 0.2
+        }
+    }
+}
